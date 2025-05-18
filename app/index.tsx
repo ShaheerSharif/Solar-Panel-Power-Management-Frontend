@@ -1,18 +1,47 @@
-import { SafeAreaView, StyleSheet, Text } from "react-native";
+import { useFonts } from "expo-font";
+import { SplashScreen, useRouter } from "expo-router";
+import { useEffect, useState } from "react";
 
 export default function Index() {
-  return (
-    <SafeAreaView style={styles.headerDiv}>
-      <Text>Edit app/index.tsx to edit this screen.</Text>
-    </SafeAreaView>
-  );
-}
+  const router = useRouter();
+  const [appIsReady, setAppIsReady] = useState(false);
+  const [fontsLoaded] = useFonts({
+    "JetBrainsMono Nerd Font Propo": require("@/assets/fonts/JetBrainsMonoNLNerdFontPropo-Regular.ttf"),
+  });
 
-const styles = StyleSheet.create({
-  headerDiv: {
-    flex: 1,
-    justifyContent: "flex-start",
-    alignItems: "center",
-    padding: 20,
-  },
-});
+  useEffect(() => {
+    async function prepare() {
+      try {
+        SplashScreen.preventAutoHideAsync();
+        // ! isme app ready krne ke liye mazeed code dalna hoga (API calls etc)
+        // ! ye sirf aik delay simulate krwata hai, `setTimeout` wala function hatega
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+      } catch (e) {
+        console.warn(e);
+      } finally {
+        setAppIsReady(true);
+      }
+    }
+
+    prepare();
+  }, []);
+
+  useEffect(() => {
+    async function hideSplashAndRedirect() {
+      if (appIsReady && fontsLoaded) {
+        await SplashScreen.hideAsync();
+        // ! user login check krna hoga alag se, ye sirf hardcoded hai
+        const isLoggedIn = true;
+        if (isLoggedIn) {
+          router.replace("/(home)/dashboard");
+        } else {
+          router.replace("/(auth)/login");
+        }
+      }
+    }
+
+    hideSplashAndRedirect();
+  }, [appIsReady, fontsLoaded]);
+
+  return;
+}

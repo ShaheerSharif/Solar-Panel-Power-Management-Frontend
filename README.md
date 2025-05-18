@@ -2,5 +2,5 @@ Start via Expo Go
 
 ```bash
 npm install
-npm expo start
+npx expo start
 ```

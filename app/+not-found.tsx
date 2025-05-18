@@ -1,21 +1,33 @@
-import ThemedText from "@/components/ui/ThemedText";
-import ThemedView from "@/components/ui/ThemedView";
-import { Link, Stack } from "expo-router";
-import { StyleSheet } from "react-native";
+import { Stack, useRouter } from "expo-router";
+import { useState } from "react";
+import { SafeAreaView, StyleSheet, TouchableOpacity } from "react-native";
 
 export default function NotFoundScreen() {
+  const router = useRouter();
+  const [isLoggedIn, setIsLoggedIn] = useState(true);
+
   return (
     <>
       <Stack.Screen options={{ title: "Oops! This screen doesn't exist." }} />
-      <ThemedView style={styles.container}>
-        <Link href="/">
-          <ThemedText>Go to home screen</ThemedText>
-        </Link>
-      </ThemedView>
+      <SafeAreaView style={styles.container}>
+        <TouchableOpacity
+          onPress={() => {
+            if (isLoggedIn) {
+              router.replace("/(home)/dashboard");
+            } else {
+              router.replace("/(auth)/login");
+            }
+          }}
+        />
+      </SafeAreaView>
     </>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {},
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
 });
